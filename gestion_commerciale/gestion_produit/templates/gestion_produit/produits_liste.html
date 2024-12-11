@@ -1,0 +1,259 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+  
+    <div class="container mt-4">
+        <h1 class="text-center">Liste des Produits</h1>
+        <!-- Bouton pour ouvrir la fenêtre modale -->
+        <div class="text-end mb-3">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addproduitModal">
+                Ajouter un Produits
+            </button>
+            <a href="{% url 'gestion_produit:recherche_produit'  %}" class="btn btn-primary">Rechercher Produit</a>   
+        </div>
+        <div>
+            <input type="text" id="champ-recherche" placeholder="Rechercher un produit...">
+            <div id="resultats"></div>
+            <table id="table-produits" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Désignation</th>
+                        <th>Description</th>
+                        <th>Prix Achat</th>
+                        <th>Prix Vente</th>
+                        <th>Stock</th>
+                        <th>Barcode</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Les résultats de recherche seront insérés ici -->
+                </tbody>
+            </table>
+        </div>
+
+       
+    </div>
+
+    <!-- Fenêtre modale pour ajouter un produit -->
+    <div class="modal fade" id="addproduitModal" tabindex="-1" aria-labelledby="addproduitModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addproduitModalLabel">
+                        <i class="bi bi-person-plus-fill"></i> Ajouter un Nouveau produit
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Formulaire -->
+                    <form method="post" action="{% url 'gestion_produit:ajouter_produit' %}">
+                        {% csrf_token %}
+                            <div class="col-md-6">
+                                    <label for="designation" class="form-label">Désignation</label>
+                                    <input type="text" class="form-control" id="designation" name="designation" required>
+                            </div>                       
+
+                            <div class="col-md-6">
+                                <label for="description" class="form-label">description</label>
+                                <input type="text" class="form-control" id="description" name="description" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="prix_achat" class="form-label">Prix Achat</label>
+                                <input type="text" class="form-control" id="prix_achat" name="prix_achat" required>
+                            </div>
+                        
+                            <div class="col-md-6">
+                                <label for="prix_vente" class="form-label">Prix Vente</label>
+                                <input type="text" class="form-control" id="prix_vente" name="prix_vente" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="stock" class="form-label">Stock</label>
+                                <input type="text" class="form-control" id="stock" name="stock" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="barcode" class="form-label">barcode</label>
+                                <input type="text" class="form-control" id="barcode" name="barcode" required>
+                            </div>
+                            
+                         
+                        
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                            <button type="submit" class="btn btn-primary">Ajouter</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS -->
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="modifierproduitModal" tabindex="-1" aria-labelledby="modifierproduitModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modifierproduitModalLabel">Modifier le produit</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Formulaire de modification du produit -->
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="nom" class="form-label">Nom</label>
+                            <input type="text" class="form-control" id="nom" name="nom" value="{{ form.nom.value }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="prenom" class="form-label">Prénom</label>
+                            <input type="text" class="form-control" id="prenom" name="prenom" value="{{ form.prenom.value }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" value="{{ form.email.value }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="tel" class="form-label">Téléphone</label>
+                            <input type="text" class="form-control" id="tel" name="tel" value="{{ form.tel.value }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="tel2" class="form-label">Téléphone2</label>
+                            <input type="text" class="form-control" id="tel2" name="tel2" value="{{ form.tel2.value }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="adresse" class="form-label">Adresse</label>
+                            <input type="text" class="form-control" id="adresse" name="adresse" value="{{ form.adresse.value }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="ville" class="form-label">Ville</label>
+                            <input type="text" class="form-control" id="ville" name="ville" value="{{ form.ville.value }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="date_creation" class="form-label">Date de création</label>
+                            <input type="date" class="form-control" id="date_creation" name="date_creation" value="{{ produit.date_creation|date:'d/m/y' }}">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Construire la base de l'URL de modification sans ID
+            const baseUrlModifier = "{% url 'gestion_produit:modifier_produit' 1 %}".replace("1/", "");
+            const baseUrlSupprimer = "{% url 'gestion_produit:supprimer_produit' 1 %}".replace("1/", "");
+            console.log("Valeur de baseUrlModifier:", baseUrlModifier);
+    
+            // Fonction pour charger les produits
+            function chargerProduits(query) {
+                $.ajax({
+                    url: "{% url 'gestion_produit:recherche_produit2' %}",
+                    data: { query: query },
+                    success: function(data) {
+                        console.log("Données reçues :", data); // Ajoutez ceci
+                        let tbody = $("#table-produits tbody");
+                        tbody.empty();
+
+                        if (data.resultats && data.resultats.length > 0) {
+                            data.resultats.forEach(function (produit) {
+                                // Vérifiez les valeurs avant de les utiliser
+                                console.log("Produit :", produit);
+
+                                let modifierUrl = produit.idProduit ? baseUrlModifier + produit.idProduit : "#";
+                                let supprimerUrl = produit.idProduit ? baseUrlSupprimer + produit.idProduit : "#";
+
+                                // Ajout des données au tableau
+                                let row = `<tr>
+                                    <td>${produit.idProduit || "Non défini"}</td>
+                                    <td>${produit.designation || "Non défini"}</td>
+                                    <td>${produit.description || "Non défini"}</td>
+                                    <td>${produit.prix_achat || "Non défini"}</td>
+                                    <td>${produit.prix_vente || "Non défini"}</td>
+                                    <td>${produit.stock || "Non défini"}</td>
+                                    <td>${produit.barcode || "Non défini"}</td>
+                                    <td>
+                                        <a href="${modifierUrl}" class="btn btn-sm btn-warning">Modifier</a>
+                                        <a href="${supprimerUrl}" class="btn btn-sm btn-danger">Supprimer</a>
+                                    </td>
+                                </tr>`;
+                                tbody.append(row);
+                            });
+                        } else {
+                            tbody.append("<tr><td colspan='8'>Aucun produit trouvé.</td></tr>");
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Erreur lors du chargement :", status, error);
+                    }
+                });
+            }
+  // Charger les produits lors du chargement initial
+            chargerProduits('');
+    
+            // Appel AJAX lors de la recherche
+            $("#champ-recherche").on("keyup", function () {
+                let query = $(this).val();
+                chargerProduits(query);
+            });
+        });
+    </script>
+    
+    
+        <!-- Modal de message de succès/erreur -->
+        <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="messageModalLabel">Notification</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }}" role="alert">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lien vers le JS de Bootstrap (pour les interactions dynamiques) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+     <!-- Script pour afficher le modal si des messages existent -->
+     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            {% if messages %}
+                var messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+                messageModal.show();
+            {% endif %}
+            
+        });
+    </script>
+       
+
+    
+    {% endblock %}
+

@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <h2>Ajouter un Détail de Vente à la Facture {{ facture_vente.idvente }}</h2>
+
+
+       <!-- Affichage des messages d'erreur ou de succès -->
+       {% if messages %}
+       <div class="alert alert-info">
+           {% for message in messages %}
+               <p>{{ message }}</p>
+           {% endfor %}
+       </div>
+       {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Ajouter le Détail de Vente</button>
+    </form>
+
+    <a href="{% url 'gestion_ventes:detail_facture' facture_vente.idvente %}" class="btn btn-secondary">Retour à la Facture</a>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#id_produit').change(function () {
+                const produitId = $(this).val();
+                if (produitId) {
+                    $.ajax({
+                        url: '{% url "gestion_ventes:get_prix_vente" %}',
+                        data: { produit_id: produitId },
+                        success: function (data) {
+                            $('#id_prix_vente').val(data.prix_vente);
+
+                            $('#id_prix_unitaire').val(data.prix_vente);
+                        },
+                        error: function () {
+                            $('#id_prix_vente').val('');
+                            $('#id_prix_unitaire').val('');
+                        }
+                    });
+                } else {
+                    $('#id_prix_vente').val('');
+                }
+            });
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}
+
+

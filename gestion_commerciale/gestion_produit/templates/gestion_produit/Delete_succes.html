@@ -1,0 +1,25 @@
+<!-- success.html ou error.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Résultat de l'opération</title>
+    <!-- Vous pouvez ajouter ici vos fichiers CSS ou autres ressources -->
+</head>
+<body>
+    <div class="container">
+        {% if messages %}
+            <div class="alert alert-{{ messages.0.tags }}" role="alert">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <!-- Lien pour revenir à la liste des produits -->
+        <a href="{% url 'gestion_produit:produits_list' %}">Retour à la liste des produits</a>
+    </div>
+</body>
+</html>
+
+  

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scanner de Code-barres</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Masquer la vidéo par défaut */
+        #scanner {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center my-4">Scanner de Code-barres</h1>
+
+        <!-- Vidéo pour afficher le flux de la caméra -->
+        <video id="scanner" width="100%" height="auto" autoplay></video>
+
+        <!-- Entrée pour afficher le code-barres scanné -->
+        <input type="text" id="barcodeResult" class="form-control my-3" placeholder="Code-barres scanné" readonly>
+
+        <!-- Bouton pour démarrer/arrêter le scan -->
+        <button id="startButton" class="btn btn-primary">Démarrer le Scan</button>
+
+        <!-- Bouton pour affecter le code-barres -->
+        <button id="assignBarcodeButton" class="btn btn-success mt-3" disabled>Affecter le Code-barres</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.18.6"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const startButton = document.getElementById('startButton');
+        const scanner = document.getElementById('scanner');
+        const barcodeResult = document.getElementById('barcodeResult');
+        const assignBarcodeButton = document.getElementById('assignBarcodeButton');
+        let scanning = false;
+        let codeReader = new ZXing.BrowserBarcodeReader();
+        let videoStream = null;
+
+        // Démarrer/arrêter le scan en fonction de l'état actuel
+        async function startScan() {
+            if (scanning) {
+                stopScan();
+                return;
+            }
+
+            try {
+                // Recherche des caméras
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const videoDevices = devices.filter(device => device.kind === 'videoinput');
+
+                if (videoDevices.length === 0) {
+                    alert("Aucune caméra détectée.");
+                    return;
+                }
+
+                const deviceId = videoDevices[0].deviceId;
+
+                videoStream = await navigator.mediaDevices.getUserMedia({
+                    video: { deviceId: { exact: deviceId } }
+                });
+
+                scanner.srcObject = videoStream;
+                scanner.play();
+
+                // Afficher la vidéo de la caméra
+                scanner.style.display = 'block';
+
+                scanning = true;
+                startButton.innerHTML = 'Arrêter le Scan';
+
+                let isDecoding = false;
+
+                // Détecter les codes-barres
+                codeReader.decodeFromVideoDevice(deviceId, scanner, (result, error) => {
+                    if (isDecoding) return;
+                    if (result) {
+                        isDecoding = true;
+                        barcodeResult.value = result.text;
+                        assignBarcodeButton.disabled = false; // Activer le bouton pour affecter le code-barres
+                        setTimeout(() => (isDecoding = false), 1000);
+                    } else if (error) {
+                        console.warn('Pas de code détecté.');
+                    }
+                });
+            } catch (error) {
+                console.error("Erreur lors de l'accès à la caméra :", error);
+                alert("Erreur lors de l'accès à la caméra.");
+            }
+        }
+
+        // Fonction pour arrêter le scan
+        function stopScan() {
+            if (videoStream) {
+                videoStream.getTracks().forEach(track => track.stop());
+                videoStream = null;
+            }
+
+            codeReader.reset();
+            scanner.srcObject = null;
+            scanning = false;
+
+            // Masquer la vidéo après l'arrêt du scan
+            scanner.style.display = 'none';
+
+            startButton.innerHTML = 'Démarrer le Scan';
+        }
+
+        // Démarrer ou arrêter le scan lorsqu'on clique sur le bouton
+        startButton.addEventListener('click', (event) => {
+            event.preventDefault(); // Empêcher la soumission du formulaire
+            startScan();
+        });
+
+        // Activer le bouton d'affectation du code-barres
+        assignBarcodeButton.addEventListener('click', () => {
+            // Code pour affecter le code-barres au produit ou à un champ de formulaire ici
+            alert('Code-barres affecté : ' + barcodeResult.value);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Caméra</title>
+</head>
+<body>
+
+
+    <h2>Scanner un Barcode</h2>
+
+    <!-- Zone pour afficher l'image de la webcam -->
+    <video id="video" width="300" height="200" style="border: 1px solid #ccc"></video>
+
+    <br>
+
+    <!-- Champ où le résultat du scan sera affiché -->
+    <label for="barcode-result">Résultat du Scan:</label>
+    <input type="text" id="barcode-result" readonly>
+
+    <!-- Bouton pour démarrer le scan -->
+    <button onclick="startScan()">Commencer le Scan</button>
+
+    <!-- Charger ZXing depuis un CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.18.6/dist/index.min.js"></script>
+
+    <script>
+        // Déclarer la variable codeReader en dehors de la fonction pour qu'elle soit accessible dans tout le script
+        let codeReader;
+
+        // Initialisation de ZXing pour la lecture des barcodes
+        function startScan() {
+            // Vérification que ZXing est bien chargé
+            if (typeof ZXing === 'undefined') {
+                console.error('ZXing n\'est pas défini. Vérifiez que le script est bien chargé.');
+                return;
+            }
+
+            // Initialiser le codeReader si ce n'est pas déjà fait
+            if (!codeReader) {
+                codeReader = new ZXing.BrowserBarcodeReader();
+            }
+
+            codeReader.getVideoInputDevices()
+                .then((videoInputDevices) => {
+                    console.log('Périphériques vidéo disponibles:', videoInputDevices);
+                    if (videoInputDevices.length > 0) {
+                        const firstDeviceId = videoInputDevices[0].deviceId;
+                        console.log('Utilisation du périphérique:', firstDeviceId);
+                        codeReader.decodeFromVideoDevice(firstDeviceId, 'video', (result, err) => {
+                            if (result) {
+                                // Si un barcode est trouvé, afficher le résultat dans le champ
+                                document.getElementById('barcode-result').value = result.getText();
+                            }
+                            if (err && !(err instanceof ZXing.NotFoundException)) {
+                                console.error('Erreur lors de la lecture du barcode:', err);
+                            }
+                        }).then(() => {
+                            console.log('Scan démarré');
+                        }).catch((error) => {
+                            console.error('Erreur lors du démarrage du scan:', error);
+                        });
+                    } else {
+                        console.log('Aucun périphérique vidéo trouvé');
+                    }
+                })
+                .catch((err) => {
+                    console.error('Erreur lors de la récupération des périphériques vidéo:', err);
+                });
+        }
+    </script>
+
+
+    <h1>Test de la caméra//</h1>
+    <video id="scannerVideo" autoplay playsinline style="width: 640px; height: 480px; border: 1px solid black;"></video>
+    <script>
+    /*    navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function(stream) {
+                const video = document.getElementById('scannerVideo');
+                video.srcObject = stream;
+                video.play();
+            })
+            .catch(function(err) {
+                console.error("Erreur d'accès à la caméra :", err);
+                alert("Impossible d'accéder à la caméra. Vérifiez les autorisations.");
+            });*/
+    </script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <h2>Recherche de Produits</h2>
+
+    <!-- Formulaire de recherche -->
+    <form method="get" action="{% url 'gestion_produit:recherche_produit' %}">
+        <div class="form-group">
+            <label for="search">Rechercher par Désignation ou Description :</label>
+            <input type="text" name="q" id="search" class="form-control" value="{{ query }}" placeholder="Tapez une partie de la désignation ou description">
+        </div>
+        <button type="submit" class="btn btn-primary">Rechercher</button>
+    </form>
+
+    <!-- Affichage des résultats de la recherche -->
+    {% if produits %}
+        <h3>Résultats pour "{{ query }}" :</h3>
+        <ul>
+            {% for produit in produits %}
+                <li>
+                    <a href="{% url 'gestion_produit:modifier_produit' produit.idProduit %}">
+                        {{ produit.designation }} - {{ produit.description }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        {% if query %}
+            <p>Aucun produit trouvé pour "{{ query }}".</p>
+        {% else %}
+            <p>Veuillez entrer un terme de recherche.</p>
+        {% endif %}
+    {% endif %}
+
+{% endblock %}

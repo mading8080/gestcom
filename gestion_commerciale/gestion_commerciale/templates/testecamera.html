@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scanner de Code-Barres</title>
+    <style>
+        #video {
+            width: 100%;
+            max-width: 600px;
+            height: auto;
+        }
+        #result {
+            width: 100%;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Scanner de Code-Barres</h2>
+    
+    <video id="video" autoplay></video>
+    <input type="text" id="result" placeholder="Code détecté" readonly>
+    <br>
+    <button id="startScan">Démarrer le Scan</button>
+    <button id="stopScan" style="display:none;">Arrêter le Scan</button>
+
+    <!-- Charger ZXing.js depuis un CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.18.6/umd/index.min.js"></script>
+    
+
+    <script>
+        let codeReader;
+        let videoElement = document.getElementById('video');
+        let startButton = document.getElementById('startScan');
+        let stopButton = document.getElementById('stopScan');
+        let resultField = document.getElementById('result');
+        let videoStream;
+
+        // Fonction pour démarrer le scan
+        async function startScan() {
+            if (typeof ZXing === 'undefined') {
+                console.error("ZXing n'est pas défini. Vérifiez que le script est bien chargé.");
+                return;
+            }
+
+            try {
+                const videoInputDevices = await ZXing.BrowserQRCodeReader.listVideoInputDevices();
+                if (videoInputDevices.length === 0) {
+                    console.error("Aucune caméra détectée.");
+                    return;
+                }
+
+                codeReader = new ZXing.BrowserBarcodeReader();
+                console.log("Caméra trouvée:", videoInputDevices[0].deviceId);
+
+                videoStream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        deviceId: videoInputDevices[0].deviceId,
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    }
+                });
+
+                videoElement.srcObject = videoStream;
+
+                codeReader.decodeFromVideoDevice(videoInputDevices[0].deviceId, videoElement, (result, error) => {
+                    if (result) {
+                        console.log("Code-barres détecté:", result.text);
+                        resultField.value = result.text;
+                    } else if (error) {
+                        console.error("Erreur de décodage:", error);
+                    }
+                });
+
+                startButton.style.display = 'none';
+                stopButton.style.display = 'inline';
+            } catch (error) {
+                console.error("Erreur lors de l'accès à la caméra:", error);
+            }
+        }
+
+        // Fonction pour arrêter le scan
+        function stopScan() {
+            if (videoStream) {
+                let tracks = videoStream.getTracks();
+                tracks.forEach(track => track.stop());
+            }
+
+            startButton.style.display = 'inline';
+            stopButton.style.display = 'none';
+        }
+
+        // Ajouter les événements sur les boutons
+        startButton.addEventListener('click', startScan);
+        stopButton.addEventListener('click', stopScan);
+    </script>
+
+</body>
+</html>

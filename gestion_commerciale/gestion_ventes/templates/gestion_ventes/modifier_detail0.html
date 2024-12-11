@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+{% block content %}
+<h2>Modifier le détail de la vente</h2>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        {{ form.produit.label_tag }}
+        {{ form.produit|add_class:"form-control" }}
+    </div>
+    <div class="form-group">
+        {{ form.quantite.label_tag }}
+        {{ form.quantite|add_class:"form-control" }}
+    </div>
+    <div class="form-group">
+        {{ form.prix_unitaire.label_tag }}
+        {{ form.prix_unitaire|add_class:"form-control" }}
+    </div>
+    <div class="form-group">
+        {{ form.prix_vente.label_tag }}
+        {{ form.prix_vente|add_class:"form-control" }}
+    </div>
+    <button type="submit" class="btn btn-success">Valider</button>
+    <button type="cancel" class="btn btn-primary">Annuler</button>
+</form>
+
+
+
+
+{% endblock %}

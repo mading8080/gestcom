@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block content %}
+
+
+    <h1>Liste des Fournisseurs</h1>
+
+    {% if fournisseurs %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Ville</th>
+                    <th>Téléphone</th>
+                    <th>Email</th>
+                    <th>Date de Création</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for fournisseur in fournisseurs %}
+                    <tr>
+                        <td>{{ fournisseur.Nom }}</td>
+                        <td>{{ fournisseur.Prenom }}</td>
+                        <td>{{ fournisseur.Ville }}</td>
+                        <td>{{ fournisseur.Tel1 }}</td>
+                        <td>{{ fournisseur.Email }}</td>
+                        <td>{{ fournisseur.Date_Creation }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Aucun fournisseur trouvé.</p>
+    {% endif %}
+
+
+{% endblock %}

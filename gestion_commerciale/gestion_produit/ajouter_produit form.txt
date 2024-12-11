@@ -1,0 +1,21 @@
+from .models import Produit
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .forms import ProduitForm
+
+def ajouter_produit(request):
+    if request.method == 'POST':
+        print('Données POST:', request.POST)  # Debug pour vérifier les données envoyées
+        form = ProduitForm(request.POST)  # Lier les données au formulaire
+
+        if form.is_valid():
+            form.save()  # Crée un nouvel objet Produit si les données sont valides
+            messages.success(request, "Le produit a été ajouté avec succès.")
+            return redirect('gestion_produit:produits_list')  # Redirige vers la liste des produits
+        else:
+            messages.error(request, "Une erreur est survenue. Veuillez vérifier les champs.")
+    else:
+        form = ProduitForm()  # Formulaire vide pour affichage initial
+
+    return render(request, 'gestion_produit/ajouter_produit.html', {'form': form})
+
