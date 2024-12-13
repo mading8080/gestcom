@@ -9,7 +9,7 @@ def page_principale(request):
 
 
 def testecamera(request):
-    return render(request, 'testecamera0.html')
+    return render(request, 'testecamera.html')
 
 
 from django.http import JsonResponse
