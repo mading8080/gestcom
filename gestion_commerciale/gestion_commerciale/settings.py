@@ -103,16 +103,12 @@ DATABASES = {
     'default': {
         
     
-'ENGINE': 'django.db.backends.mysql',  # Le backend pour MySQL
-        'NAME': 'gestioncom',  # Nom de la base de données
-        
-    
-'USER': 'root',  # Nom d'utilisateur pour la connexion
-        'PASSWORD': 'pass',  # Mot de passe de l'utilisateur
-        'HOST': 'localhost',  # Hôte de la base de données (souvent 'localhost' pour une base locale)
-        
-  
-'PORT': '3306',  # Port pour MySQL (par défaut 3306)
+    'ENGINE': 'django.db.backends.mysql',  # Le backend pour MySQL
+    'NAME': 'gestioncom',  # Nom de la base de données       
+    'USER': 'root',  # Nom d'utilisateur pour la connexion
+    'PASSWORD': 'pass',  # Mot de passe de l'utilisateur
+    'HOST': 'localhost',  # Hôte de la base de données (souvent 'localhost' pour une base locale)
+    'PORT': '3306',  # Port pour MySQL (par défaut 3306)
     }
 }
 
