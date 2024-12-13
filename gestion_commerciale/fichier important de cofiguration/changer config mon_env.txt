@@ -1,0 +1,4 @@
+home: 
+C:\Users\PC HOME\AppData\Local\Programs\Python\Python312
+HAAL:
+C:\Users\PC RESP\AppData\Local\Programs\Python\Python312

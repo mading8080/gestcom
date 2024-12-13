@@ -1,0 +1,20 @@
+# Fichiers Python
+*.pyc
+__pycache__/
+
+# Environnements virtuels
+env/
+venv/
+
+# Clés et fichiers sensibles
+*.env
+*.pem
+db.sqlite3
+
+# Statics & Media
+/staticfiles/
+media/
+
+# Configuration IDE
+.vscode/
+.idea/
