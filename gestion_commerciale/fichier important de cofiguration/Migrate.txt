@@ -1,2 +1,5 @@
 python manage.py makemigrations
 python manage.py migrate
+git add .
+git commit -m "Migrations Django ajoutées"
+git push origin main

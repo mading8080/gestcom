@@ -12,7 +12,7 @@ from .models import Produit
 
 def ajouter_produit(request):
     if request.method == 'POST':
-        print('Données Posté:', request.POST)
+        # print('Données Posté:', request.POST)
         # Récupérer les données du formulaire envoyé depuis la modale
         designation = request.POST.get('designation')
         description = request.POST.get('description')

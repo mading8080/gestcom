@@ -104,7 +104,7 @@ DATABASES = {
         
     
     'ENGINE': 'django.db.backends.mysql',  # Le backend pour MySQL
-    'NAME': 'gestioncom',  # Nom de la base de données       
+    'NAME': 'gestioncomw',  # Nom de la base de données       
     'USER': 'root',  # Nom d'utilisateur pour la connexion
     'PASSWORD': 'pass',  # Mot de passe de l'utilisateur
     'HOST': 'localhost',  # Hôte de la base de données (souvent 'localhost' pour une base locale)
