@@ -8,28 +8,71 @@ def client_list(request):
 
 
 
-from django.shortcuts import render, redirect
+
+    
+       
+from django.shortcuts import render
+from django.db import IntegrityError
 from django.contrib import messages
-from .forms import ClientForm
+from .models import Client
 
 def ajouter_client(request):
-    form = ClientForm()
     if request.method == 'POST':
-        print('Données Posté:', request.POST)
-        form = ClientForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Client ajouté avec succès!")
-            return redirect('gestion_clients:client_list')
-        else:
-            # Afficher un message d'erreur si le formulaire n'est pas valide
-            
-            messages.error(request, "Veuillez vérifier les informations saisies.")
-    else:
-        form = ClientForm()  # Toujours initialiser un formulaire vide en GET
-    
-    return render(request, 'gestion_clients/ajouter_client.html', {'form': form})
+        # Récupération des données du formulaire
+        nom = request.POST.get('nom')
+        prenom = request.POST.get('prenom')
+        numrc = request.POST.get('numrc')
+        i_f = request.POST.get('i_f')
+        adresse = request.POST.get('adresse')
+        ville = request.POST.get('ville')
+        tel = request.POST.get('tel')
+        tel2 = request.POST.get('tel2')
+        fax = request.POST.get('fax')
+        email = request.POST.get('email')
+        date_creation = request.POST.get('date_creation')
 
+        try:
+            # Création du client
+            client = Client(
+                nom=nom, prenom=prenom, numrc=numrc, i_f=i_f, adresse=adresse, ville=ville,
+                tel=tel, tel2=tel2, fax=fax, email=email, date_creation=date_creation
+            )
+            client.save()
+            messages.success(request, "Client ajouté avec succès.")
+            # Aucune redirection ici, on reste dans la même page
+            return render(request, 'gestion_clients/clients_liste.html')
+
+        except IntegrityError as e:
+            # Gestion des erreurs d'unicité
+            print("Erreur d'intégrité : ", e)
+
+            if 'unique constraint' in str(e):
+                if 'tel' in str(e):
+                    messages.error(request, "Ce numéro de téléphone est déjà utilisé.")
+                    print("Erreur : Le numéro de téléphone est déjà utilisé.")
+                elif 'email' in str(e):
+                    messages.error(request, "Cet email est déjà utilisé.")
+                    print("Erreur : L'email est déjà utilisé.")
+            else:
+                messages.error(request, "Une erreur inattendue s'est produite.")
+        
+        # Retourner la même page (clients_liste.html) avec les erreurs
+        return render(request, 'gestion_clients/clients_liste.html', {
+            'form_errors': messages.get_messages(request),
+            'nom': nom,
+            'prenom': prenom,
+            'numrc': numrc,
+            'i_f': i_f,
+            'adresse': adresse,
+            'ville': ville,
+            'tel': tel,
+            'tel2': tel2,
+            'fax': fax,
+            'email': email,
+            'date_creation': date_creation
+        })
+
+    return render(request, 'gestion_clients/clients_liste.html')
 
 
 from django.shortcuts import render, get_object_or_404
@@ -49,6 +92,10 @@ def modifier_client(request, client_id):
                 # Enregistrez le client avec les données validées
                 form.save()
                 message = "Client modifié avec succès."  # Message de succès
+
+                # Redirigez vers la liste des clients après une modification réussie
+                return redirect('gestion_client:clients_liste')  # Remplacez par l'URL de votre page de liste
+            
             except ValidationError as e:
                 # Si une validation échoue, on récupère les erreurs et on les affiche
                 message = e.message_dict

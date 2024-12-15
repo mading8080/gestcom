@@ -5,7 +5,7 @@
         <h1 class="text-center">Liste des clients</h1>
         <!-- Bouton pour ouvrir la fenêtre modale -->
         <div class="text-end mb-3">
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addclientModal">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addClientModal">
                 Ajouter un client
             </button>
             <!--button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modifierclientModal">
@@ -66,44 +66,104 @@
         </table>
     </div>
 
-    <!-- Bouton pour ouvrir la modale -->
-    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addclientModal">
-        Ajouter un client
-    </button>
 
     <!-- Fenêtre modale pour ajouter un client -->
-    <div class="modal fade {% if form.errors %}show{% endif %}" 
-         id="addclientModal" 
-         tabindex="-1" 
-         aria-labelledby="addclientModalLabel" 
-         aria-hidden="true"
-         {% if form.errors %}style="display: block;"{% endif %}>
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addclientModalLabel">Ajouter un client</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form method="post" action="{% url 'gestion_clients:ajouter_client' %}">
-                        {% csrf_token %}
-                        {% if form.errors %}
-                            <div class="alert alert-danger">
-                                <ul>
-                                    {% for field, errors in form.errors.items %}
-                                        <li>{{ field }} : {{ errors|join:", " }}</li>
+                <!-- Fenêtre modale pour ajouter un Client -->
+            <!-- Fenêtre modale pour ajouter un Client -->
+<div class="modal fade" id="addClientModal" tabindex="-1" aria-labelledby="addClientModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addClientModalLabel">
+                    <i class="bi bi-person-plus-fill"></i> Ajouter un Nouveau Client
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Formulaire -->
+                <form method="post" action="{% url 'gestion_clients:ajouter_client' %}">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="nom" class="form-label">Nom</label>
+                            <input type="text" class="form-control" id="nom" name="nom" value="{{ nom }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="prenom" class="form-label">Prénom</label>
+                            <input type="text" class="form-control" id="prenom" name="prenom" value="{{ prenom }}" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="numrc" class="form-label">Numéro RC</label>
+                            <input type="text" class="form-control" id="numrc" name="numrc" value="{{ numrc }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="i_f" class="form-label">Identifiant fiscal</label>
+                            <input type="text" class="form-control" id="i_f" name="i_f" value="{{ i_f }}" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="adresse" class="form-label">Adresse</label>
+                            <input type="text" class="form-control" id="adresse" name="adresse" value="{{ adresse }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="ville" class="form-label">Ville</label>
+                            <input type="text" class="form-control" id="ville" name="ville" value="{{ ville }}" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="tel" class="form-label">Téléphone</label>
+                            <input type="text" class="form-control" id="tel" name="tel" value="{{ tel }}" required>
+                            {% if form_errors %}
+                                <div class="text-danger">
+                                    {% for error in form_errors %}
+                                        {% if "Téléphone" in error.message %}
+                                            <p>{{ error }}</p>
+                                        {% endif %}
                                     {% endfor %}
-                                </ul>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="tel2" class="form-label">Téléphone 2</label>
+                            <input type="text" class="form-control" id="tel2" name="tel2" value="{{ tel2 }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="fax" class="form-label">Fax</label>
+                            <input type="text" class="form-control" id="fax" name="fax" value="{{ fax }}" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ email }}" required>
+                        {% if form_errors %}
+                            <div class="text-danger">
+                                {% for error in form_errors %}
+                                    {% if "Email" in error.message %}
+                                        <p>{{ error }}</p>
+                                    {% endif %}
+                                {% endfor %}
                             </div>
                         {% endif %}
-                        {{ form.as_p }}
+                    </div>
+                    <div class="mb-3">
+                        <label for="date_creation" class="form-label">Date de création</label>
+                        <input type="date" class="form-control" id="date_creation" name="date_creation" value="{{ date_creation }}">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
                         <button type="submit" class="btn btn-primary">Ajouter</button>
-                    </form>
-                </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
+
+
 
 <!-- JavaScript Bootstrap -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

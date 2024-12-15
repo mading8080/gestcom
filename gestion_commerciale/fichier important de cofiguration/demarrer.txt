@@ -1,2 +1,3 @@
 mon_env/Scripts/activate
 cd gestion_commerciale
+python manage.py runserver
