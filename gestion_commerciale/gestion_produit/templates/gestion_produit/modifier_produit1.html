@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scanner Code-barres</title>
+    <style>
+        #video {
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+            border: 2px solid black;
+            margin: 0 auto;
+            display: block;
+        }
+        #barcodeResult {
+            text-align: center;
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">Scanner de Code-barres</h1>
+    <video id="video" autoplay></video>
+    <p id="barcodeResult">Code-barres détecté : <span id="result">Aucun</span></p>
+    <button id="stopButton" style="display:none;">Arrêter le scan</button>
+
+    <!-- Ajouter la bibliothèque ZXing -->
+    <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.18.6/umd/index.min.js"></script>
+    <script>
+        const video = document.getElementById("video");
+        const resultElement = document.getElementById("result");
+        const stopButton = document.getElementById("stopButton");
+        let codeReader = new ZXing.BrowserBarcodeReader();
+        let videoStream = null;
+
+        // Fonction pour démarrer le scanner
+        async function startScanner() {
+            try {
+                // Liste des périphériques (caméras disponibles)
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const videoDevices = devices.filter(device => device.kind === 'videoinput');
+
+                if (videoDevices.length === 0) {
+                    alert("Aucune caméra détectée sur cet appareil.");
+                    return;
+                }
+
+                const selectedDeviceId = videoDevices[0].deviceId; // Sélectionner la caméra arrière
+
+                // Démarrer le flux vidéo
+                videoStream = await navigator.mediaDevices.getUserMedia({
+                    video: { deviceId: selectedDeviceId }
+                });
+
+                video.srcObject = videoStream;
+
+                // Démarrer le lecteur de code-barres
+                codeReader.decodeFromVideoDevice(selectedDeviceId, video, (result, error) => {
+                    if (result) {
+                        resultElement.textContent = result.text; // Afficher le code-barres scanné
+                        console.log("Code-barres détecté : ", result.text);
+                    } else if (error) {
+                        console.warn("Aucun code-barres détecté : ", error);
+                    }
+                });
+
+                stopButton.style.display = "block"; // Afficher le bouton d'arrêt
+            } catch (error) {
+                console.error("Erreur lors de l'accès à la caméra :", error);
+                alert("Impossible d'accéder à la caméra. Veuillez vérifier les permissions.");
+            }
+        }
+
+        // Fonction pour arrêter le scanner
+        function stopScanner() {
+            if (videoStream) {
+                videoStream.getTracks().forEach(track => track.stop());
+            }
+            codeReader.reset();
+            stopButton.style.display = "none";
+        }
+
+        // Initialiser le scanner au chargement de la page
+        document.addEventListener("DOMContentLoaded", () => {
+            startScanner();
+
+            stopButton.addEventListener("click", () => {
+                stopScanner();
+            });
+        });
+    </script>
+</body>
+</html>

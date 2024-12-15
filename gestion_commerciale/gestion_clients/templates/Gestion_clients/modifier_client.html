@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modifier produit</title>
+    <title>Modifier Client</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
@@ -27,7 +27,27 @@
 <body>
     <div class="container mt-4">
         <div class="form-container">
-            <h1 class="text-center mb-4">Modifier le produit</h1>
+            <h1 class="text-center mb-4">Modifier le Client</h1>
+          
+
+    <!-- Afficher un message de succès -->
+    {% if message %}
+    {% if message == "Client modifié avec succès." %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% else %}
+            <!-- Afficher les erreurs -->
+            <div class="alert alert-danger">
+                <ul>
+                    {% for field, errors in message.items %}
+                        <li><strong>{{ field }}</strong>: {{ errors|join:", " }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+    {% endif %}
+
 
             <!-- Formulaire de modification du produit -->
             <form method="post">
@@ -84,11 +104,11 @@
                     </div>
                 </div>
 
-                <!-- Date de création -->
+                                <!-- Date de création -->
                 <div class="mb-3">
                     <label for="date_creation" class="form-label">Date de création</label>
                     <input type="date" class="form-control" id="date_creation" name="date_creation" 
-                    value="{{ Client.date_creation|date:'Y-m-d' }}">
+                    value="{{ form.date_creation.value|date:'Y-m-d' }}" disabled>
                 </div>
                  
 
@@ -96,7 +116,7 @@
                 <div class="text-center">
                     <div class="text-center">
                         <div class="mb-3"><button type="submit" class="btn btn-primary">Valider</button> 
-                        <button type="cancel" class="btn btn-primary">Annuler</button></div>
+                            <a href="{% url 'gestion_clients:client_list' %}" class="btn btn-secondary">Annuler</a>
                     </div>
                 </div>
             </form>

@@ -1,0 +1,45 @@
+#video {
+    width: 100%; /* Ajuste la largeur de la vidéo */
+    max-width: 500px; /* Limite la largeur maximale de la vidéo */
+    height: auto; /* Laisse la hauteur s'ajuster automatiquement */
+    border: 2px solid black;
+    margin: 20px auto; /* Centre la vidéo horizontalement */
+    display: block; /* Assure que la vidéo est bien affichée */
+}
+
+#result {
+    text-align: center;
+    font-size: 1.5em;
+    margin-top: 20px;
+}
+
+#stopButton {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: red;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+#stopButton:hover {
+    background-color: darkred;
+}
+.form-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-header h1 {
+    color: #007bff;
+    font-size: 2rem;
+}
+
+.form-label {
+    font-weight: bold;
+}

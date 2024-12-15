@@ -19,6 +19,7 @@ class Produit(models.Model):
     stock = models.IntegerField()
     barcode = models.CharField(max_length=50, unique=True, null=True, blank=True)  # Nouveau champ
     
+    
     def delete(self, *args, **kwargs):
     # Vérifie si ce produit est lié à des détails de vente
         if self.details_vente.exists():  # Relation inversée via `related_name`
@@ -31,12 +32,15 @@ class Produit(models.Model):
     
     def save(self, *args, **kwargs):
         # Générer un code-barres unique si absent
-        """if not self.barcode:
+        if not self.barcode:
             while True:
                 new_barcode = generer_barcode()
                 if not Produit.objects.filter(barcode=new_barcode).exists():
                     self.barcode = new_barcode
-                    break"""
+                    break           
+                else: 
+                  print(f"Le code-barres est déjà utilisé ")
+                      
         super().save(*args, **kwargs)
     class Meta:
         db_table = 'produit'

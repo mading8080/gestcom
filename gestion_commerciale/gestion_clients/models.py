@@ -14,15 +14,21 @@ class Client(models.Model):
     tel2 = models.CharField(max_length=15, blank=True, null=True)
     fax = models.CharField(max_length=15, blank=True, null=True)
     email = models.EmailField(max_length=255, blank=True, null=True,unique=True)
-    date_creation = models.DateField(auto_now=False, editable=True)
+    date_creation = models.DateField(auto_now_add=True,editable=True)  # Ce champ ne sera défini que lors de la création du client, pas lors de la modification
+    #date_creation = models.DateField(auto_now=False, editable=True)
 
     def formatted_date_creation(self):
         return self.date_creation.strftime('%d/%m/%Y')  # Format jj/mm/aaaa
 
     def save(self, *args, **kwargs):
         # Vérifiez si un client avec les mêmes informations existe déjà
-        if Client.objects.filter(email=self.email).exclude(pk=self.pk).exists():
-            raise ValidationError(f"Un client avec l'email '{self.email}' existe déjà.")
+        #if Client.objects.filter(email=self.email).exclude(pk=self.pk).exists():
+        #    raise ValidationError(f"Un client avec l'email '{self.email}' existe déjà.")
+        
+        # Vérifiez si un autre client possède déjà ce numéro de téléphone
+        #if Client.objects.filter(tel=self.tel).exclude(pk=self.pk).exists():
+        #    raise ValidationError(f"Un client avec le numéro de téléphone '{self.tel}' existe déjà.")
+
         super().save(*args, **kwargs)  # Appel de la méthode parente
 
     def __str__(self):
@@ -31,3 +37,6 @@ class Client(models.Model):
     class Meta:
         db_table = 'client'  # Nom de la table dans la base de données
         ordering = ['nom']  # Tri par date de création (optionnel)
+
+
+

@@ -1,0 +1,16 @@
+python manage.py makemigrations
+python manage.py migrate
+git add .
+git commit -m "Migrations Django ajoutées"
+git push origin main
+
+
+
+
+git pull origin main
+
+en cas de conflit :
+
+git add .
+git commit -m "Conflits
+

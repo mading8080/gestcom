@@ -7,67 +7,62 @@ def client_list(request):
     return render(request, 'gestion_clients/clients_liste.html', {'clients': clients})
 
 
-from django.shortcuts import render, redirect
-from django.shortcuts import render, redirect
-from django.core.exceptions import ValidationError
-from django.contrib import messages
-from .models import Client
 
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .forms import ClientForm
 
 def ajouter_client(request):
+    form = ClientForm()
     if request.method == 'POST':
-        nom = request.POST.get('nom')
-        prenom = request.POST.get('prenom')
-        numrc = request.POST.get('numrc')
-        i_f = request.POST.get('i_f')
-        email = request.POST.get('email')
-        tel = request.POST.get('tel')
-        tel2 = request.POST.get('tel2')
-        adresse = request.POST.get('adresse')
-        ville = request.POST.get('ville')
-        date_creation = request.POST.get('date_creation')
-
-        # Créer un nouveau client
-    #Client.objects.create(
-          
-        Client = Client(nom=nom, prenom=prenom, numrc=numrc , i_f=i_f , email=email, tel=tel,
-            tel2=tel2, adresse=adresse, ville=ville, date_creation=date_creation
-        )
-        try:
-            Client.save()  # Tente d'enregistrer le client
-            messages.success(request, "Client ajouté avec succès.")
-            return redirect('client_list')  # Redirection après succès
-        except ValidationError as e:
-            # Capture l'erreur et ajoute le message d'erreur au contexte
-            messages.error(request, e.message)  # Ajout d'un message d'erreur
+        print('Données Posté:', request.POST)
+        form = ClientForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Client ajouté avec succès!")
+            return redirect('gestion_clients:client_list')
+        else:
+            # Afficher un message d'erreur si le formulaire n'est pas valide
             
+            messages.error(request, "Veuillez vérifier les informations saisies.")
+    else:
+        form = ClientForm()  # Toujours initialiser un formulaire vide en GET
     
-        
-        # Rediriger vers la liste des clients
-        return redirect('gestion_clients:client_list')
-    
-    return render(request, 'gestion_clients/ajouter_client.html')  # Formulaire d'ajout
+    return render(request, 'gestion_clients/ajouter_client.html', {'form': form})
 
 
 
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import render, get_object_or_404
+from django.core.exceptions import ValidationError
 from .models import Client
-from .forms import ClientForm
+from .forms import ClientForm  # Assurez-vous d'utiliser un formulaire pour les données
 
 def modifier_client(request, client_id):
     client = get_object_or_404(Client, idclient=client_id)  # Définit "client" pour toutes les branches  
-     
-     # Si le formulaire est soumis via POST
+    message = None  # Toujours initialiser la variable message
+    form = ClientForm(instance=client)  # Initialiser le formulaire avec les données du client
+
     if request.method == 'POST':
-        print("Données POST :", request.POST)
-        form = ClientForm(request.POST, instance=client)
+        form = ClientForm(request.POST, instance=client)  # Mettre à jour le formulaire avec les données POST
         if form.is_valid():
-            form.save()
-            return redirect('gestion_clients:client_list')  # Redirige après modification
-        print(form.errors)  # Pour déboguer, afficher les erreurs du formulaire si elles existent
-    else:
-        form = ClientForm(instance=client)
-    return render(request, 'gestion_clients/modifier_client.html', {'form': form , 'Client': client})
+            try:
+                # Enregistrez le client avec les données validées
+                form.save()
+                message = "Client modifié avec succès."  # Message de succès
+            except ValidationError as e:
+                # Si une validation échoue, on récupère les erreurs et on les affiche
+                message = e.message_dict
+        else:
+            # Si le formulaire n'est pas valide, on peut aussi afficher les erreurs
+            message = form.errors
+            form = ClientForm(instance=client)
+
+    # Retourner la vue avec le formulaire et le message
+    return render(request, 'gestion_clients/modifier_client.html', {
+        'form': form,
+        'client': client,
+        'message': message,  # Toujours passer le message au template
+    })
 
 
 from django.shortcuts import get_object_or_404, redirect, render
