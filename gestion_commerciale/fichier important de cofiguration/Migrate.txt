@@ -6,7 +6,11 @@ git push origin main
 
 
 
+<<<<<<< HEAD
 git status
+=======
+
+>>>>>>> 78c32f0032cdb19f4dedca7cef52a5352942e48d
 git pull origin main
 
 en cas de conflit :
