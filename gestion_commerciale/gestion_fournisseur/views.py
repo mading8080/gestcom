@@ -26,28 +26,36 @@ from .models import Fournisseur
 
 def ajouter_fournisseur(request):
     if request.method == 'POST':
-        nom = request.POST.get('nom')
-        prenom = request.POST.get('prenom')
-        numrc = request.POST.get('numrc')
-        i_f = request.POST.get('i_f')
-        adresse = request.POST.get('adresse')
-        ville = request.POST.get('ville')
-        tel = request.POST.get('tel')
-        tel2 = request.POST.get('tel2')
-        fax = request.POST.get('fax')
-        email = request.POST.get('email')
-        date_creation = request.POST.get('date_creation')
+        form = FournisseurForm(request.POST)
+        print(f'data send: {request.POST}')
+        print(request.POST.get('date_creation'))
 
-        # Créer un nouveau fournisseur
-        Fournisseur.objects.create(
-            nom=nom, prenom=prenom,numrc=numrc , i_f=i_f , adresse=adresse, ville=ville,
-            tel=tel, tel2=tel2, fax=fax, email=email, date_creation=date_creation
-        )
+
+        if form.is_valid():
+            print("Formulaire valide")
+            print(form.cleaned_data)
+            # Sauvegarder le fournisseur si le formulaire est valide
+            fournisseur = form.save(commit=False)
+            if not fournisseur.adresse:
+                fournisseur.adresse = "Adresse non renseignée"
+            if not fournisseur.ville:
+                fournisseur.ville = "Ville non renseignée"
+            fournisseur.save()
+            #form.save()
+            # Rediriger vers la liste des fournisseurs ou une autre page après l'ajout réussi
+            return redirect('gestion_fournisseur:fournisseur_list')  # Ajustez le nom de l'URL selon votre configuration
+        else:
+            print("Formulaire invalide")
+            print(form.errors)
+            # Si le formulaire n'est pas valide, nous afficherons les erreurs
+            return render(request, 'gestion_fournisseur/ajouter_fournisseur.html', {'form': form})
+    else:
         
-        # Rediriger vers la liste des fournisseurs
-        return redirect('gestion_fournisseur:fournisseur_list')
-    
-    return render(request, 'gestion_fournisseur/ajouter_fournisseur.html')  # Formulaire d'ajout
+        # Si la requête est GET, on crée un formulaire vide
+        form = FournisseurForm()
+        return render(request, 'gestion_fournisseur/ajouter_fournisseur.html', {'form': form})
+
+
 
 
 from django.shortcuts import render, get_object_or_404, redirect
@@ -82,7 +90,7 @@ def supprimer_fournisseur(request, fournisseur_id):
     fournisseur = get_object_or_404(Fournisseur, idfournisseur=fournisseur_id)
     fournisseur.delete()  # Supprimer le fournisseur de la base de données    
       # Ajouter un message de succès
-    messages.success(request, f"Le fournisseur '{fournisseur.nom}' a été supprimé avec succès.")  # Remplacez `client.nom` par un champ adapté à votre modèle.
+    messages.success(request, f"Le fournisseur '{fournisseur.nom}' a été supprimé avec succès.")  # Remplacez `fournisseur.nom` par un champ adapté à votre modèle.
   except Exception as e:
         # Ajouter un message d'erreur en cas de problème
         messages.error(request, f"Une erreur est survenue lors de la suppression du Fournisseur : {e}")

@@ -5,9 +5,9 @@
     <div class="container mt-4">
         <h1 class="text-center">Liste des Fournisseurs</h1>
         <div class="text-end mb-3">
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addFournisseurModal">
-                Ajouter un fournisseur
-            </button>
+            <a href="{% url 'gestion_fournisseur:ajouter_fournisseur' %}" class="btn btn-primary">
+                Ajouter un fournisseur:
+            </a>
         </div>
         {% if messages %}
         <div>
@@ -73,9 +73,9 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addFournisseurModalLabel">
-                    <i class="bi bi-person-plus-fill"></i> Ajouter un Nouveau Fournisseur
-                </h5>
+                <a href="{% url 'gestion_clients:ajouter_client' %}" class="btn btn-primary">
+                    Ajouter un fournisseur:
+                </a>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">

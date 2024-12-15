@@ -82,15 +82,30 @@ from .forms import ClientForm
 def ajouter_client(request):
     if request.method == 'POST':
         form = ClientForm(request.POST)
+        print(f'data send: {request.POST}')
+        print(request.POST.get('date_creation'))
+
+
         if form.is_valid():
+            print("Formulaire valide")
+            print(form.cleaned_data)
             # Sauvegarder le client si le formulaire est valide
-            form.save()
+            client = form.save(commit=False)
+            if not client.adresse:
+                client.adresse = "Adresse non renseignée"
+            if not client.ville:
+                client.ville = "Ville non renseignée"
+            client.save()
+            #form.save()
             # Rediriger vers la liste des clients ou une autre page après l'ajout réussi
             return redirect('gestion_clients:client_list')  # Ajustez le nom de l'URL selon votre configuration
         else:
+            print("Formulaire invalide")
+            print(form.errors)
             # Si le formulaire n'est pas valide, nous afficherons les erreurs
             return render(request, 'gestion_clients/ajouter_client.html', {'form': form})
     else:
+        
         # Si la requête est GET, on crée un formulaire vide
         form = ClientForm()
         return render(request, 'gestion_clients/ajouter_client.html', {'form': form})
@@ -110,6 +125,8 @@ def modifier_client(request, client_id):
         form = ClientForm(request.POST, instance=client)  # Mettre à jour le formulaire avec les données POST
         if form.is_valid():
             try:
+              
+                cleaned_date = form.cleaned_data['date_creation']
                 # Enregistrez le client avec les données validées
                 form.save()
                 message = "Client modifié avec succès."  # Message de succès
@@ -121,6 +138,7 @@ def modifier_client(request, client_id):
                 # Si une validation échoue, on récupère les erreurs et on les affiche
                 message = e.message_dict
         else:
+         
             # Si le formulaire n'est pas valide, on peut aussi afficher les erreurs
             message = form.errors
             form = ClientForm(instance=client)
