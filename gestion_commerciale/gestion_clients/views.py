@@ -10,7 +10,7 @@ def client_list(request):
 
 
     
-       
+"""     
 from django.shortcuts import render
 from django.db import IntegrityError
 from django.contrib import messages
@@ -73,6 +73,27 @@ def ajouter_client(request):
         })
 
     return render(request, 'gestion_clients/clients_liste.html')
+"""
+# gestion_clients/views.py
+from django.shortcuts import render, redirect
+from django.http import HttpResponse
+from .forms import ClientForm
+
+def ajouter_client(request):
+    if request.method == 'POST':
+        form = ClientForm(request.POST)
+        if form.is_valid():
+            # Sauvegarder le client si le formulaire est valide
+            form.save()
+            # Rediriger vers la liste des clients ou une autre page après l'ajout réussi
+            return redirect('gestion_clients:client_list')  # Ajustez le nom de l'URL selon votre configuration
+        else:
+            # Si le formulaire n'est pas valide, nous afficherons les erreurs
+            return render(request, 'gestion_clients/ajouter_client.html', {'form': form})
+    else:
+        # Si la requête est GET, on crée un formulaire vide
+        form = ClientForm()
+        return render(request, 'gestion_clients/ajouter_client.html', {'form': form})
 
 
 from django.shortcuts import render, get_object_or_404
@@ -94,7 +115,7 @@ def modifier_client(request, client_id):
                 message = "Client modifié avec succès."  # Message de succès
 
                 # Redirigez vers la liste des clients après une modification réussie
-                return redirect('gestion_client:clients_liste')  # Remplacez par l'URL de votre page de liste
+                return redirect('gestion_clients:client_list')  # Remplacez par l'URL de votre page de liste
             
             except ValidationError as e:
                 # Si une validation échoue, on récupère les erreurs et on les affiche

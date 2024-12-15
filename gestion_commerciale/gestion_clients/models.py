@@ -1,33 +1,33 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.utils.timezone import now
+from django.utils import timezone
 
 
 class Client(models.Model):
     idclient = models.AutoField(primary_key=True)
     nom = models.CharField(max_length=100)
     prenom = models.CharField(max_length=100)
-    numrc = models.CharField(max_length=20, default="Pending")
-    i_f  = models.CharField(max_length=20, default="Pending")
+    numrc = models.CharField(max_length=20)
+    i_f  = models.CharField(max_length=20)
     adresse = models.CharField(max_length=255)
     ville = models.CharField(max_length=100)
     tel = models.CharField(max_length=15,unique=True)
     tel2 = models.CharField(max_length=15, blank=True, null=True)
     fax = models.CharField(max_length=15, blank=True, null=True)
     email = models.EmailField(max_length=255, blank=True, null=True,unique=True)
-    date_creation = models.DateField(auto_now_add=True,editable=True)  # Ce champ ne sera défini que lors de la création du client, pas lors de la modification
-    #date_creation = models.DateField(auto_now=False, editable=True)
+    #date_creation = models.DateField(auto_now_add=True)
+    date_creation = models.DateField(default=timezone.now, editable=True)  # Use timezone.now() to get current date
+    
 
     def formatted_date_creation(self):
         return self.date_creation.strftime('%d/%m/%Y')  # Format jj/mm/aaaa
 
     def save(self, *args, **kwargs):
-        # Vérifiez si un client avec les mêmes informations existe déjà
-        #if Client.objects.filter(email=self.email).exclude(pk=self.pk).exists():
-        #    raise ValidationError(f"Un client avec l'email '{self.email}' existe déjà.")
-        
-        # Vérifiez si un autre client possède déjà ce numéro de téléphone
-        #if Client.objects.filter(tel=self.tel).exclude(pk=self.pk).exists():
-        #    raise ValidationError(f"Un client avec le numéro de téléphone '{self.tel}' existe déjà.")
+        # Si la date_creation n'est pas définie (ce qui est improbable avec auto_now_add),
+        # nous la définissons à la date actuelle si nécessaire.
+        if not self.date_creation:
+            self.date_creation = timezone.now().date()
 
         super().save(*args, **kwargs)  # Appel de la méthode parente
 
@@ -36,7 +36,7 @@ class Client(models.Model):
 
     class Meta:
         db_table = 'client'  # Nom de la table dans la base de données
-        ordering = ['nom']  # Tri par date de création (optionnel)
+        ordering = ['idclient']  # Tri par date de création (optionnel)
 
 
 

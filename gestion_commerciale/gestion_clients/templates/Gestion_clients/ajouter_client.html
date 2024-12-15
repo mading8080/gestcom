@@ -1,21 +1,191 @@
-{% if messages %}
-  {% for message in messages %}
-    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
-      {{ message }}
-    </div>
-  {% endfor %}
-{% endif %}
+{% load custom_filters %}
 
-<form method="post">
-  {% csrf_token %}
-  <label for="nom">Nom:</label>
-  <input type="text" id="nom" name="nom" required>
-  
-  <label for="prenom">Prénom:</label>
-  <input type="text" id="prenom" name="prenom" required>
-  
-  <label for="email">Email:</label>
-  <input type="email" id="email" name="email" required>
-  
-  <button type="submit">Ajouter</button>
-</form>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter un Client</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .form-container {
+            max-width: 800px;
+            width: 100%;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-label {
+            font-weight: bold;
+        }
+
+        .form-control {
+            border-radius: 4px;
+        }
+
+        .invalid-feedback {
+            display: block;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container mt-5">
+        <div class="form-container">
+            <h2 class="text-center mb-4">Ajouter un Client</h2>
+
+            <!-- Affichage des erreurs globales -->
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    <strong>Erreur !</strong> Il y a des erreurs dans le formulaire.
+                </div>
+            {% endif %}
+
+            <!-- Formulaire d'ajout de client -->
+            <form method="post" action="{% url 'gestion_clients:ajouter_client' %}">
+                {% csrf_token %}
+                
+                <!-- Nom et Prénom -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="nom" class="form-label">Nom</label>
+                        {{ form.nom|add_class:"form-control" }}
+                        {% if form.nom.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.nom.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label for="prenom" class="form-label">Prénom</label>
+                        {{ form.prenom|add_class:"form-control" }}
+                        {% if form.prenom.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.prenom.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- N° RC et Identifiant Fiscal -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="numrc" class="form-label">Num RC</label>
+                        {{ form.numrc|add_class:"form-control" }}
+                        {% if form.numrc.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.numrc.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label for="i_f" class="form-label">Identifiant Fiscal</label>
+                        {{ form.i_f|add_class:"form-control" }}
+                        {% if form.i_f.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.i_f.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Téléphone et Téléphone 2 -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="tel" class="form-label">Téléphone</label>
+                        {{ form.tel|add_class:"form-control" }}
+                        {% if form.tel.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.tel.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label for="tel2" class="form-label">Téléphone 2</label>
+                        {{ form.tel2|add_class:"form-control" }}
+                        {% if form.tel2.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.tel2.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Fax et Email -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="fax" class="form-label">Fax</label>
+                        {{ form.fax|add_class:"form-control" }}
+                        {% if form.fax.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.fax.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label for="email" class="form-label">Email</label>
+                        {{ form.email|add_class:"form-control" }}
+                        {% if form.email.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.email.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Date de création -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="date_creation" class="form-label">Date de Création</label>
+                        {{ form.date_creation|add_class:"form-control" }}
+                        {% if form.date_creation.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.date_creation.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Bouton soumettre -->
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">Ajouter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
+</body>
+</html>
